@@ -26,6 +26,7 @@
     if (self)
     {
         self.layer.allowsEdgeAntialiasing = YES;
+        [self addDisplaylink];
     }
     return self;
 }
@@ -39,12 +40,18 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    CGPoint origin = [self.layer convertPoint:CGPointZero toLayer:self.referenceView.layer];
-    
     CGContextRef c = UIGraphicsGetCurrentContext();
     CGContextSaveGState(c);
-    CGContextConcatCTM(c,  CGAffineTransformInvert(self.transform));
-    [self.patterImage drawAtPoint:CGPointMake(-origin.x, -origin.y)];
+    CALayer *layer = self.layer;
+    if ([[self.layer animationKeys] count])
+        layer = self.layer.presentationLayer;
+    
+    CGPoint position = [self.referenceView.layer convertPoint:CGPointZero fromLayer:layer];
+    CGAffineTransform transform = [layer affineTransform];
+    
+
+    CGContextConcatCTM(c,  CGAffineTransformInvert(transform));
+    [self.patterImage drawAtPoint:CGPointMake(-position.x, -position.y)];
     CGContextRestoreGState(c);
 }
 
@@ -90,6 +97,28 @@
 {
     [super setTransform:transform];
     [self setNeedsDisplay];
+}
+
+
+- (void)addDisplaylink
+{
+    if (displayLink) {
+        [displayLink invalidate];
+    }
+    
+    displayLink = [CADisplayLink displayLinkWithTarget:self
+                                              selector:@selector(tick:)];
+    
+    [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+}
+
+- (void)tick:(CADisplayLink *)sender
+{
+    if ([[self.layer animationKeys] count])
+    {
+        [self setNeedsDisplay];
+        
+    }
 }
 
 

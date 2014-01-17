@@ -33,7 +33,7 @@
 {
     [super viewDidAppear:animated];
     
-    BHDynamicBackgroundView *patternView = [[BHDynamicBackgroundView alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
+    BHDynamicBackgroundView *patternView = [[BHDynamicBackgroundView alloc] initWithFrame:CGRectMake(200, 100, 100, 100)];
     patternView.layer.borderColor = [UIColor colorWithRed:237.0/255.0 green:215.0/255.0 blue:209.0/255.0 alpha:1.0].CGColor;
     patternView.layer.borderWidth = 1.0/[[UIScreen mainScreen] scale];
     patternView.referenceView = self.view;
@@ -52,6 +52,26 @@
     UIPinchGestureRecognizer *zRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(scale:)];
     zRecognizer.delegate = self;
     [_patternView addGestureRecognizer:zRecognizer];
+    
+    //
+    
+    BHDynamicBackgroundView *patternView2 = [[BHDynamicBackgroundView alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
+    patternView2.layer.borderColor = [UIColor colorWithRed:237.0/255.0 green:215.0/255.0 blue:209.0/255.0 alpha:1.0].CGColor;
+    patternView2.layer.borderWidth = 1.0/[[UIScreen mainScreen] scale];
+    patternView2.referenceView = self.view;
+    
+    [self.view addSubview:patternView2];
+    
+    [UIView animateWithDuration:2.0
+                          delay:0.0
+                        options:UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat | UIViewAnimationCurveLinear
+                     animations:^{
+        patternView2.center = CGPointMake(150, 400);
+        patternView2.transform = CGAffineTransformMakeRotation(45);
+    } completion:nil];
+    
+    
+
 }
 
 - (void)rotate:(UIRotationGestureRecognizer *)rotate {
